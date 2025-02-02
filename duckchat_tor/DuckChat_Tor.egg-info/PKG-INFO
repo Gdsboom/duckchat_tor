@@ -1,0 +1,21 @@
+Metadata-Version: 2.2
+Name: DuckChat_Tor
+Version: 0.1
+Summary: Краткое описание вашей библиотеки
+Home-page: None
+Author: Ваше имя
+Author-email: None
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.11
+Description-Content-Type: text/markdown
+Requires-Dist: selenium>=4.27.1
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: description-content-type
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

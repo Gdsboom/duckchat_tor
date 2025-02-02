@@ -1,0 +1,9 @@
+README.md
+setup.py
+DuckChat_Tor/DuckChat_Tor.py
+DuckChat_Tor/__init__.py
+DuckChat_Tor.egg-info/PKG-INFO
+DuckChat_Tor.egg-info/SOURCES.txt
+DuckChat_Tor.egg-info/dependency_links.txt
+DuckChat_Tor.egg-info/requires.txt
+DuckChat_Tor.egg-info/top_level.txt
