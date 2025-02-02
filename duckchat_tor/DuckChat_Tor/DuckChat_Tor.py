@@ -7,7 +7,23 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.firefox.service import Service as FirefoxService
 class DuckChat_Tor:
-    def __init__(self, tor_browser_path, headless, url, browser):
+    """
+    Класс для работы с браузером.
+
+    Параметры:
+    ----------
+    tor_browser_path : str
+        Путь к исполняемому файлу браузера.
+    headless : bool
+        Режим работы браузера (без графического интерфейса, если True).
+    url : str, optional
+        URL-адрес для открытия (например, "https://duckduckgo.com/?q=DuckDuckGo+AI+Chat&ia=chat&duckai=1").
+    browser : str
+        Название браузера (например, "firefox").
+    service : str, optional
+        Путь к драйверу браузера (например, "D:/geckodriver.exe").
+    """
+    def __init__(self, tor_browser_path, headless, url, browser, service):
         try:
             self.__close_tor_browser()
         except:
@@ -24,9 +40,7 @@ class DuckChat_Tor:
             self.firefox_options.add_argument("--headless")
         self.firefox_options.add_argument("--profile")
         self.firefox_options.add_argument(f"{tor_browser_path}/TorBrowser/Data/Browser/profile.default")
-        service = FirefoxService("D:/geckodriver.exe")
-        self.driver = webdriver.Firefox(service=service, options=self.firefox_options)
-
+        self.driver = webdriver.Firefox(service=FirefoxService(service), options=self.firefox_options)
         """
         try:
             # Ждём, пока не исчезнут все элементы на странице
