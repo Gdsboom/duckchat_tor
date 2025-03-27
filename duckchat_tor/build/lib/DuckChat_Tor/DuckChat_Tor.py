@@ -270,8 +270,15 @@ class DuckChat_Tor:
         except Exception as e:
             pass
             # print("Произошла ошибка в user-prompt:", e)
-
+    def delete_space(self, text):
+        try:
+            while True:
+                text.remove("")
+        except:
+            pass
     def GetPrompt(self, text):
+        buff_amt = 0
+
         self.wait_page()
         #self.driver.find_element(By.NAME, "user-prompt").click()
         bufelement = self.driver.find_element(By.NAME, "user-prompt").send_keys(text)
@@ -281,12 +288,10 @@ class DuckChat_Tor:
         # print("1!")
         # Локатор кнопки (например, по атрибуту aria-label)
         button_locator = (By.CSS_SELECTOR, 'button[type="submit"]')
-        # print("2!")
         # Ждём, пока кнопка станет включённой (атрибут 'disabled' исчезнет)
         if (WebDriverWait(self.driver, 10).until(
                 lambda d: d.find_element(*button_locator).get_attribute("disabled") is None
         )):
-            # print("3!")
 
             buttons = WebDriverWait(self.driver, 10).until(
                 lambda d: [button for button in d.find_elements(*button_locator) if
@@ -308,19 +313,60 @@ class DuckChat_Tor:
                 try:
                     # Явное ожидание, чтобы убедиться, что элемент загружен
                     wait = WebDriverWait(self.driver, 10)
-                    #print("1!")
                     # Используйте XPath для поиска элемента <p> внутри нужного <div>
-                    p_element = wait.until(EC.presence_of_element_located(
-                        (By.XPATH, f"//div[starts-with(@heading, '{self.model}')]//p[not(@class)]")
+                    p_elements = wait.until(EC.presence_of_all_elements_located(
+                        (By.XPATH, f"//div[starts-with(@heading, '{self.model}')]//*[not(@class)]")
                     ))
-                    # Извлеките текст из элемента <p>
-                    p_text = p_element.text
-                    print(p_text)
-                    return p_text
 
+                    header_texts = []
+
+                    # Множество для отслеживания уже обработанных родителей
+                    processed_parents = set()
+
+                    for elem in p_elements:
+                        # Проверяем, является ли элемент чьим-то дочерним элементом без класса
+                        # (если его родитель без класса и уже был обработан)
+                        parent = elem.find_element(By.XPATH, "./..")
+                        if not parent.get_attribute("class") and parent in processed_parents:
+                            continue  # Пропускаем дочерний элемент
+
+                        # Получаем только текст, который НЕ находится в дочерних элементах
+                        direct_text = self.driver.execute_script(
+                            """
+                            var node = arguments[0];
+                            var text = '';
+                            for (var i = 0; i < node.childNodes.length; i++) {
+                                var child = node.childNodes[i];
+                                if (child.nodeType === Node.TEXT_NODE) {
+                                    text += child.textContent.trim() + ' ';
+                                }
+                            }
+                            return text.trim();
+                            """,
+                            elem
+                        )
+
+                        if direct_text:
+                            header_texts.append(direct_text)
+                            processed_parents.add(elem)  # Запоминаем родительский элемент
+
+                    self.delete_space(header_texts)
+                    #print(header_texts)
+                    p_texts = "\n".join(header_texts)
+                    return p_texts
+                    """
+                    # Извлеките текст из каждого элемента <p>
+                    p_texts = [p.text for p in p_elements]
+                    print(p_texts)
+                    self.delete_space(p_texts)
+                    print(p_texts)
+                    p_texts = "\n".join(p_texts)
+                    print(p_texts)
+                    """
                 except Exception as e:
-                    #print("Ошбика в ожидании ответа!")
+                    # print("Ошбика в ожидании ответа!")
                     pass
+
                 if time.time() - start_time > wait_time:
                     # print("Время ожидания истекло.")
                     break
@@ -363,10 +409,13 @@ class DuckChat_Tor:
         # Перезагрузка страницы
         #self.driver.refresh()
         try:
+            buff_amt += 1
+            if ( buff_amt > 4 ):
+                buff_amt = 0
+                buff_amt += "dsa"
             return self.GetPrompt(text)
         except:
             self.new_chat()
-
             return self.GetPrompt(text)
 
     def new_chat(self):
