@@ -2,12 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
     name='DuckChat_Tor',
-    version='0.1',
+    version='0.2',
     packages=find_packages(),
     install_requires=[
         'selenium>=4.27.1'  # Укажите минимальную версию Selenium
     ],
-    author='Ваше имя',
+    author='Tolik',
     author_email='None',
     description='Краткое описание вашей библиотеки',
     long_description=open('README.md').read(),
